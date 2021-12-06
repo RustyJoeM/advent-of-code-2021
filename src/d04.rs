@@ -126,18 +126,13 @@ impl Bingo {
             .for_each(|board| board.draw_number(num));
     }
 
-    pub fn get_winning_boards(&self) -> Option<Vec<BingoBoard>> {
-        let boards: Vec<BingoBoard> = self
+    pub fn get_winning_boards(&self) -> Vec<BingoBoard> {
+        self
             .boards
             .iter()
             .filter(|b| b.is_winning)
             .cloned()
-            .collect();
-        if boards.is_empty() {
-            None
-        } else {
-            Some(boards)
-        }
+            .collect()
     }
 }
 
@@ -147,7 +142,8 @@ fn solve_part1(data: &(Vec<Number>, Vec<InputBoard>)) -> Number {
 
     for &num in drawn_numbers.iter() {
         bingo.draw_number(num);
-        if let Some(winning_boards) = bingo.get_winning_boards() {
+        let winning_boards = bingo.get_winning_boards();
+        if !winning_boards.is_empty() {
             let score = winning_boards[0].score;
             return score * num;
         }
@@ -161,8 +157,8 @@ fn solve_part2(data: &(Vec<Number>, Vec<InputBoard>)) -> Number {
 
     for &num in drawn_numbers.iter() {
         bingo.draw_number(num);
-
-        if let Some(winning_boards) = bingo.get_winning_boards() {
+        let winning_boards = bingo.get_winning_boards();
+        if !winning_boards.is_empty() {
             if bingo.boards.len() > 1 {
                 bingo.remove_won();
                 continue;
