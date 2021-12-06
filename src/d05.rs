@@ -38,6 +38,14 @@ fn debug_field(field: &Field, size: usize) {
     }
 }
 
+fn tilt(from: Num, to: Num) -> Num {
+    match from - to {
+        0 => 0,
+        x if x > 0 => 1,
+        _ => -1,
+    }
+}
+
 fn solve(data: &[Line], skip_diagonals: bool) -> usize {
     let mut field: Field = Default::default();
 
@@ -45,17 +53,8 @@ fn solve(data: &[Line], skip_diagonals: bool) -> usize {
         let &(x0, y0) = a;
         let &(x1, y1) = b;
 
-        let dx = match x1 - x0 {
-            0 => 0,
-            x if x > 0 => 1,
-            _ => -1,
-        };
-
-        let dy = match y1 - y0 {
-            0 => 0,
-            y if y > 0 => 1,
-            _ => -1,
-        };
+        let dx = tilt(x1, x0);
+        let dy = tilt(y1, y0);
 
         if skip_diagonals && dx != 0 && dy != 0 {
             continue;
