@@ -8,17 +8,17 @@ fn parse_input(data: &str) -> Vec<Num> {
 }
 
 fn breed_fish(data: &[Num], days: usize) -> Res {
-    let mut count_by_internal: Vec<Res> = vec![0; 9];
-    for &fish in data {
-        count_by_internal[fish as usize] += 1;
+    let mut counts: [u64; 9] = [0; 9];
+    for &days_to_birth in data {
+        counts[days_to_birth as usize] += 1;
     }
 
     for _ in 0..days {
-        count_by_internal.rotate_left(1);
-        count_by_internal[6] += count_by_internal[8];
+        counts.rotate_left(1);
+        counts[6] += counts[8];
     }
 
-    count_by_internal.iter().sum()
+    counts.iter().sum()
 }
 
 fn solve_part1(data: &[Num]) -> Res {
