@@ -1,19 +1,45 @@
 mod utils;
 
-type Res = u32;
+type Num = u64;
 
-fn parse_input(data: &str) -> Vec<String> {
-    data.lines().map(|x| x.into()).collect()
+fn parse_input(data: &str) -> Vec<Num> {
+    data.split(',').map(|x| x.parse::<Num>().unwrap()).collect()
 }
 
-fn solve_part1(data: &[String]) -> Res {
-    0
+fn diff(x: Num, y: Num) -> Num {
+    if x < y {
+        y - x
+    } else {
+        x - y
+    }
 }
 
-fn solve_part2(data: &[String]) -> Res {
-    0
+fn diff2(x: Num, y: Num) -> Num {
+    let d = diff(x, y);
+    d * (d + 1) / 2
+}
+
+fn smallest_distance(data: &[Num], compare: &dyn Fn(Num, Num) -> Num) -> Num {
+    let &min = data.iter().min().unwrap();
+    let &max = data.iter().max().unwrap();
+
+    let mut r = data.len() as Num * compare(min, max);
+    for i in min..=max {
+        let fuel: Num = data.iter().map(|&x| compare(i, x)).sum();
+        r = fuel.min(r);
+    }
+
+    r
+}
+
+fn solve_part1(data: &[Num]) -> Num {
+    smallest_distance(data, &diff)
+}
+
+fn solve_part2(data: &[Num]) -> Num {
+    smallest_distance(data, &diff2)
 }
 
 generate_main!(7);
 
-generate_tests!(7, 0, 0);
+generate_tests!(7, 37, 168);
