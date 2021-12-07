@@ -1,6 +1,7 @@
-use std::collections::HashMap;
-
 mod utils;
+const DAY_ID: utils::DayIdType = 4;
+
+use std::collections::HashMap;
 
 type Number = u32;
 type InputRow = Vec<Number>;
@@ -169,6 +170,6 @@ fn solve_part2(data: &(Vec<Number>, Vec<InputBoard>)) -> Number {
     unreachable!();
 }
 
-generate_main!(4);
+generate_main!();
 
-generate_tests!(4, 188 * 24, 148 * 13);
+generate_tests!(188 * 24, 148 * 13);

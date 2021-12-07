@@ -1,5 +1,5 @@
 mod utils;
-const DAY_ID: utils::DayIdType = 0;
+const DAY_ID: utils::DayIdType = 8;
 
 type Res = u32;
 

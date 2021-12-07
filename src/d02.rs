@@ -1,4 +1,5 @@
 mod utils;
+const DAY_ID: utils::DayIdType = 2;
 
 enum Move {
     Forward(u32),
@@ -61,6 +62,6 @@ fn solve_part2(commands: &[Move]) -> u32 {
     dist * depth
 }
 
-generate_main!(2);
+generate_main!();
 
-generate_tests!(2, 150, 900);
+generate_tests!(150, 900);

@@ -1,4 +1,5 @@
 mod utils;
+const DAY_ID: utils::DayIdType = 6;
 
 type Num = u8;
 type Res = u64;
@@ -29,6 +30,6 @@ fn solve_part2(data: &[Num]) -> Res {
     breed_fish(data, 256)
 }
 
-generate_main!(6);
+generate_main!();
 
-generate_tests!(6, 5934, 26984457539);
+generate_tests!(5934, 26984457539);

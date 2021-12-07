@@ -1,13 +1,15 @@
 use std::fs::read_to_string;
 
+pub type DayIdType = u8;
+
 #[allow(dead_code)]
-pub fn string_from_input(day: u32) -> String {
+pub fn string_from_input(day: DayIdType) -> String {
     let path = format!("inputs/{:02}.txt", day);
     read_to_string(path).unwrap()
 }
 
 #[allow(dead_code)]
-pub fn string_from_sample(day: u32) -> String {
+pub fn string_from_sample(day: DayIdType) -> String {
     let path = format!("inputs/{:02}-sample.txt", day);
     read_to_string(path).unwrap()
 }
@@ -24,12 +26,12 @@ macro_rules! print_timed_result {
 
 #[macro_export]
 macro_rules! generate_main_input {
-    ( $day:literal, $is_sample:expr ) => {
+    ( $is_sample:expr ) => {
         fn main() {
             let data_str = if $is_sample {
-                utils::string_from_sample($day)
+                utils::string_from_sample(DAY_ID)
             } else {
-                utils::string_from_input($day)
+                utils::string_from_input(DAY_ID)
             };
             let data = parse_input(&data_str);
             print_timed_result!("part 1", solve_part1(&data));
@@ -40,35 +42,35 @@ macro_rules! generate_main_input {
 
 #[macro_export]
 macro_rules! generate_main {
-    ( $day:literal ) => {
-        generate_main_input!($day, false);
+    () => {
+        generate_main_input!(false);
     };
 }
 
 #[macro_export]
 macro_rules! generate_main_sample {
-    ( $day:literal ) => {
-        generate_main_input!($day, true);
+    () => {
+        generate_main_input!(true);
     };
 }
 
 #[macro_export]
 macro_rules! generate_tests {
-    ( $day:literal, $part1_result:expr, $part2_result:expr ) => {
+    ( $part1_result:expr, $part2_result:expr ) => {
         #[cfg(test)]
         mod tests {
             use super::*;
 
             #[test]
             fn part1_test() {
-                let data_str = utils::string_from_sample($day);
+                let data_str = utils::string_from_sample(DAY_ID);
                 let data = parse_input(&data_str);
                 assert_eq!(solve_part1(&data), $part1_result);
             }
 
             #[test]
             fn part2_test() {
-                let data_str = utils::string_from_sample($day);
+                let data_str = utils::string_from_sample(DAY_ID);
                 let data = parse_input(&data_str);
                 assert_eq!(solve_part2(&data), $part2_result);
             }

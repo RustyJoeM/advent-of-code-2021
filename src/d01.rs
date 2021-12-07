@@ -1,4 +1,5 @@
 mod utils;
+const DAY_ID: utils::DayIdType = 1;
 
 type Num = u32;
 
@@ -19,6 +20,6 @@ fn solve_part2(numbers: &[Num]) -> usize {
     solve_part1(&window_sums)
 }
 
-generate_main!(1);
+generate_main!();
 
-generate_tests!(1, 7, 5);
+generate_tests!(7, 5);

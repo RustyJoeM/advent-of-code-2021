@@ -1,4 +1,5 @@
 mod utils;
+const DAY_ID: utils::DayIdType = 3;
 
 type DataSlice<'a> = &'a [String];
 
@@ -94,6 +95,6 @@ fn solve_part2(data: DataSlice) -> u32 {
     oxygen * co2
 }
 
-generate_main!(3);
+generate_main!();
 
-generate_tests!(3, 198, 230);
+generate_tests!(198, 230);

@@ -1,4 +1,5 @@
 mod utils;
+const DAY_ID: utils::DayIdType = 7;
 
 type Num = u64;
 
@@ -40,6 +41,6 @@ fn solve_part2(data: &[Num]) -> Num {
     smallest_distance(data, &diff2)
 }
 
-generate_main!(7);
+generate_main_sample!();
 
-generate_tests!(7, 37, 168);
+generate_tests!(37, 168);

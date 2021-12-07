@@ -1,6 +1,7 @@
-use std::collections::HashMap;
-
 mod utils;
+const DAY_ID: utils::DayIdType = 5;
+
+use std::collections::HashMap;
 
 type Num = i32;
 type Line = ((Num, Num), (Num, Num));
@@ -79,6 +80,6 @@ fn solve_part2(data: &[Line]) -> usize {
     solve(data, false)
 }
 
-generate_main!(5);
+generate_main!();
 
-generate_tests!(5, 5, 12);
+generate_tests!(5, 12);
