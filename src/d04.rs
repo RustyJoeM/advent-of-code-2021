@@ -127,8 +127,7 @@ impl Bingo {
     }
 
     pub fn get_winning_boards(&self) -> Vec<BingoBoard> {
-        self
-            .boards
+        self.boards
             .iter()
             .filter(|b| b.is_winning)
             .cloned()
