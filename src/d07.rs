@@ -19,13 +19,13 @@ fn diff2(x: Num, y: Num) -> Num {
     d * (d + 1) / 2
 }
 
-fn smallest_distance(data: &[Num], compare: &dyn Fn(Num, Num) -> Num) -> Num {
+fn smallest_distance(data: &[Num], distance: &dyn Fn(Num, Num) -> Num) -> Num {
     let &min = data.iter().min().unwrap();
     let &max = data.iter().max().unwrap();
 
-    let mut r = data.len() as Num * compare(min, max);
+    let mut r = data.len() as Num * distance(min, max);
     for i in min..=max {
-        let fuel: Num = data.iter().map(|&x| compare(i, x)).sum();
+        let fuel: Num = data.iter().map(|&x| distance(i, x)).sum();
         r = fuel.min(r);
     }
 
