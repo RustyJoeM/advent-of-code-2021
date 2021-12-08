@@ -64,8 +64,7 @@ impl DigitEntry {
     fn all_fields(&self) -> impl Iterator<Item = &Vec<char>> {
         let input_iter = self.input.iter();
         let output_iter = self.output.iter();
-        let chain = input_iter.chain(output_iter);
-        chain
+        input_iter.chain(output_iter)
     }
 
     fn field_to_num(&self, field: &[char], nested: bool) -> Option<u32> {
@@ -108,32 +107,22 @@ impl DigitEntry {
         None
     }
 
-    // fn debug(&self) -> String {
-    //     let mut o = String::new();
-    //     for input_index in 0..self.input.len() {
-    //         let substr = match self.chars_to_num(input_index, true, false) {
-    //             Some(x) => format!(" | {:8}", x),
-    //             None => {
-    //                 let s: String = self.input[input_index].iter().collect::<String>();
-    //                 format!(" | {:8}", s)
-    //             },
-    //         };
-    //         o += &substr;
-    //     }
-    //     o += " | --";
-    //     for output_index in 0..4 {
-    //         let substr = match self.chars_to_num(output_index, false, false) {
-    //             Some(x) => format!(" | {:8}", x),
-    //             None => {
-    //                 let s: String = self.output[output_index].iter().collect::<String>();
-    //                 format!(" | {:8}", s)
-    //             },
-    //         };
-    //         o += &substr;
-    //     }
-    //     o += " |";
-    //     o
-    // }
+    #[allow(dead_code)]
+    fn debug(&self) -> String {
+        let mut o = String::new();
+        for field in self.all_fields() {
+            let substr = match self.field_to_num(field, false) {
+                Some(x) => format!(" | {:8}", x),
+                None => {
+                    // print input characters instead of number when not resolved
+                    format!(" | {:8}", field.iter().collect::<String>())
+                }
+            };
+            o += &substr;
+        }
+        o += " |";
+        o
+    }
 }
 
 fn parse_input(data: &str) -> Vec<DigitEntry> {
