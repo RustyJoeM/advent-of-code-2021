@@ -1,115 +1,137 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 mod utils;
 const DAY_ID: utils::DayIdType = 9;
 
 type Res = u32;
+type DepthType = u8;
 
-type Map = Vec<Vec<u8>>;
-
-fn parse_input(data: &str) -> Map {
-    data.lines().map(|row| {
-        row.chars().map(|x| {
-            x as u8 - '0' as u8
-        }).collect()
-    }).collect()
+#[derive(Debug)]
+struct DepthMap {
+    heights: HashMap<(i32, i32), DepthType>,
+    rows: usize,
+    columns: usize,
 }
 
-fn solve_part1(data: &Map) -> Res {
-    let mut risk = 0; 
+impl DepthMap {
+    pub fn get(&self, r: i32, c: i32) -> Option<DepthType> {
+        self.heights.get(&(r, c)).copied()
+    }
 
-    let max_y = data.len();
-    let max_x = data[0].len();
+    pub fn neighbors_of(&self, row: usize, col: usize) -> Vec<DepthType> {
+        let mut neighbors = Vec::with_capacity(4);
+        const OFFSET: [(i32, i32); 4] = [(0, -1), (0, 1), (-1, 0), (1, 0)];
+        for (y, x) in OFFSET.iter() {
+            let r = row as i32 + y;
+            let c = col as i32 + x;
+            if let Some(&x) = self.heights.get(&(r, c)).or(Some(&9)) {
+                neighbors.push(x);
+            }
+        }
+        neighbors
+    }
 
-    for r in 0..max_y {
-        for c in 0..max_x {
-            let me = data[r][c];
-            let left = if c > 0 { data[r][c-1] > me } else { true };
-            let right = if c < max_x-1 { data[r][c+1] > me } else { true };
-            let top = if r > 0 { data[r-1][c] > me } else { true };
-            let bottom = if r < max_y-1 { data[r+1][c] > me } else { true };
-            if left && right && top && bottom {
-                risk += me as u32 + 1;
+    pub fn get_basin_score(
+        &self,
+        visited: &mut HashSet<(usize, usize)>,
+        r: i32,
+        c: i32,
+        skip_direction: SkipDirection,
+    ) -> Res {
+        if r < 0 || (r > self.rows as i32 - 1) || c < 0 || (c > self.columns as i32 - 1) {
+            return 0;
+        }
+
+        let me = self.get(r, c);
+        if me == Some(9) {
+            return 0;
+        }
+
+        let mut score = 0;
+
+        if skip_direction != SkipDirection::Left && me < self.get(r, c - 1) {
+            score += self.get_basin_score(visited, r, c - 1, SkipDirection::Right);
+        }
+
+        if skip_direction != SkipDirection::Right && me < self.get(r, c + 1) {
+            score += self.get_basin_score(visited, r, c + 1, SkipDirection::Left);
+        }
+
+        if skip_direction != SkipDirection::Up && me < self.get(r - 1, c) {
+            score += self.get_basin_score(visited, r - 1, c, SkipDirection::Down);
+        }
+
+        if skip_direction != SkipDirection::Down && me < self.get(r + 1, c) {
+            score += self.get_basin_score(visited, r + 1, c, SkipDirection::Up);
+        }
+
+        visited.insert((r as usize, c as usize));
+        score
+    }
+}
+
+fn parse_input(data: &str) -> DepthMap {
+    let mut heights = HashMap::new();
+
+    let mut rows = 0;
+    data.lines().enumerate().for_each(|(row, line)| {
+        rows += 1;
+        line.chars().enumerate().for_each(|(col, ch)| {
+            heights.insert(
+                (row as i32, col as i32),
+                ch.to_digit(10).unwrap() as DepthType,
+            );
+        });
+    });
+
+    let columns = data.lines().next().unwrap().len();
+
+    DepthMap {
+        heights,
+        rows,
+        columns,
+    }
+}
+
+fn solve_part1(data: &DepthMap) -> Res {
+    let mut risk = 0;
+    for r in 0..data.rows {
+        for c in 0..data.columns {
+            let me = data.get(r as i32, c as i32).unwrap();
+            if data.neighbors_of(r, c).iter().filter(|&&x| x > me).count() == 4 {
+                risk += me as Res + 1;
             }
         }
     }
     risk
 }
 
-fn get_basin_score(data: &Map, visited: &mut HashSet<(usize, usize)>, r: usize, c: usize, go_left: bool, go_right: bool, go_up: bool, go_down: bool) -> Res {
-    let max_y = data.len();
-    let max_x = data[0].len();
-    let me = data[r][c];
-    // dbg!("----", me, (r, c), go_left, go_right, go_up, go_down);
-
-    let left = if c > 0 { data[r][c-1] > me } else { false };
-    let right = if c < max_x-1 { data[r][c+1] > me } else { false };
-    let up = if r > 0 { data[r-1][c] > me } else { false };
-    let down = if r < max_y-1 { data[r+1][c] > me } else { false };
-    // dbg!("", left, right, up, down);
-
-    let mut score = 0;
-
-    if left {
-        if go_left && c > 0 && data[r][c-1] < 9 {
-            score += get_basin_score(data, visited, r, c-1, true, false, true, true);
-        }
-    }
-
-    if right {
-        if go_right && c < max_x-1 && data[r][c+1] < 9 {
-            score += get_basin_score(data, visited, r, c+1, false, true, true, true);
-        }
-    }
-
-    if up {
-        if go_up && r > 0  && data[r-1][c] < 9 {
-            score += get_basin_score(data, visited, r-1, c, true, true, true, false);
-        }
-    }
-
-    if down {
-        if go_down && r < max_y-1 && data[r+1][c] < 9 {
-            score += get_basin_score(data, visited, r+1, c, true, true, false, true);
-        }
-    }
-
-    // if left || right || up || down {
-        visited.insert((r, c));
-    // }
-
-    // dbg!(score);
-    score
+#[derive(Eq, PartialEq)]
+enum SkipDirection {
+    None,
+    Left,
+    Right,
+    Up,
+    Down,
 }
 
-fn solve_part2(data: &Map) -> Res {
-    let mut basins: Vec<Res> = vec![]; 
+fn solve_part2(data: &DepthMap) -> Res {
+    let mut basins: Vec<Res> = vec![];
 
-    let max_y = data.len();
-    let max_x = data[0].len();
-
-    'outer: for r in 0..max_y {
-        for c in 0..max_x {
-            let me = data[r][c];
-            let left = if c > 0 { data[r][c-1] > me } else { true };
-            let right = if c < max_x-1 { data[r][c+1] > me } else { true };
-            let top = if r > 0 { data[r-1][c] > me } else { true };
-            let bottom = if r < max_y-1 { data[r+1][c] > me } else { true };
-            if left && right && top && bottom {
+    for r in 0..data.rows {
+        for c in 0..data.columns {
+            let me = data.get(r as i32, c as i32).unwrap();
+            if data.neighbors_of(r, c).iter().all(|&x| x > me) {
                 let mut visited: HashSet<(usize, usize)> = HashSet::new();
-                // dbg!("------------------------------------------------------------------------------------------------");
-                get_basin_score(data, &mut visited, r, c, true, true, true, true);
+                data.get_basin_score(&mut visited, r as i32, c as i32, SkipDirection::None);
                 basins.push(visited.len() as Res);
-                // break 'outer;
             }
         }
     }
 
     let blen = basins.len();
-    // dbg!(&basins);
-    basins.sort();
-    // dbg!(basins[blen-1], basins[blen-2], basins[blen-3]);
-    basins[blen-1] * basins[blen-2] * basins[blen-3]
+    basins.sort_unstable();
+    basins[blen - 1] * basins[blen - 2] * basins[blen - 3]
 }
 
 generate_main!();
