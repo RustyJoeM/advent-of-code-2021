@@ -9,6 +9,12 @@ struct Octopus {
     flashed: bool,
 }
 
+impl Octopus {
+    pub fn charge(&mut self) {
+        self.energy += 1;
+    }
+}
+
 #[derive(Clone)]
 struct Field {
     pub octopi: Vec<Vec<Octopus>>,
@@ -17,11 +23,11 @@ struct Field {
 }
 
 impl Field {
-    fn iter_mut_octopi(&mut self) -> impl IntoIterator<Item = &mut Octopus> {
+    pub fn iter_mut_octopi(&mut self) -> impl IntoIterator<Item = &mut Octopus> {
         self.octopi.iter_mut().flatten()
     }
 
-    fn iter_coords(&self) -> impl IntoIterator<Item = (i32, i32)> {
+    pub fn iter_coords(&self) -> impl IntoIterator<Item = (i32, i32)> {
         (0..self.rows)
             .map(|x| (0..self.cols).map(move |y| (x, y)))
             .flatten()
@@ -34,12 +40,12 @@ impl Field {
 
     fn charge(&mut self, r: i32, c: i32) {
         if !self.is_out(r, c) {
-            let mut octopus = &mut self.octopi[r as usize][c as usize];
-            octopus.energy += 1;
+            let octopus = &mut self.octopi[r as usize][c as usize];
+            octopus.charge();
         }
     }
 
-    fn do_flash(&mut self, r: i32, c: i32) {
+    pub fn do_flash(&mut self, r: i32, c: i32) {
         if self.is_out(r, c) {
             return;
         }
@@ -93,7 +99,7 @@ fn neighbors_of(r: i32, c: i32) -> Vec<(i32, i32)> {
 fn perform_step(field: &mut Field) -> u32 {
     let mut flashes = 0;
     for octo in field.iter_mut_octopi() {
-        octo.energy += 1;
+        octo.charge();
     }
 
     for (r, c) in field.iter_coords() {
@@ -127,9 +133,9 @@ fn solve_part2(field: &Field) -> Res {
 
     let max_flashes = field.rows * field.cols;
 
-    for step in 0.. {
+    for step in 1.. {
         if perform_step(&mut field) == max_flashes as u32 {
-            return step + 1;
+            return step;
         };
     }
 
