@@ -89,9 +89,6 @@ fn solve_part2(data: DataSlice) -> u32 {
     let co2_str = reduce_data(data, false);
     let co2: u32 = isize::from_str_radix(&co2_str, 2).unwrap() as u32;
 
-    let lis1 = [0000, 1111, 2222];
-    println!("{:04}", lis1[0]);
-
     oxygen * co2
 }
 

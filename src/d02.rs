@@ -29,15 +29,9 @@ fn solve_part1(moves: &[Move]) -> u32 {
     let (mut dist, mut depth) = (0, 0);
     for m in moves {
         match m {
-            Move::Forward(x) => {
-                dist += x;
-            }
-            Move::Up(x) => {
-                depth -= x;
-            }
-            Move::Down(x) => {
-                depth += x;
-            }
+            Move::Forward(x) => dist += x,
+            Move::Up(x) => depth -= x,
+            Move::Down(x) => depth += x,
         }
     }
     dist * depth
@@ -51,12 +45,8 @@ fn solve_part2(commands: &[Move]) -> u32 {
                 dist += x;
                 depth += aim * x;
             }
-            Move::Up(x) => {
-                aim -= x;
-            }
-            Move::Down(x) => {
-                aim += x;
-            }
+            Move::Up(x) => aim -= x,
+            Move::Down(x) => aim += x,
         }
     }
     dist * depth

@@ -76,6 +76,9 @@ impl BingoBoard {
     }
 
     pub fn draw_number(&mut self, num: Number) {
+        if self.is_winning {
+            return;
+        }
         let mut drawn_coords: Option<BingoCoords> = None;
         self.state
             .iter_mut()
@@ -88,14 +91,8 @@ impl BingoBoard {
                 }
             });
         if let Some((x, y)) = drawn_coords {
-            let row_full = (0..self.size).all(|i| {
-                let v = self.state.get(&(x, i)).unwrap();
-                v.1
-            });
-            let column_full = (0..self.size).all(|i| {
-                let v = self.state.get(&(i, y)).unwrap();
-                v.1
-            });
+            let row_full = (0..self.size).all(|i| self.state.get(&(x, i)).unwrap().1);
+            let column_full = (0..self.size).all(|i| self.state.get(&(i, y)).unwrap().1);
             if row_full || column_full {
                 self.is_winning = true;
             }
