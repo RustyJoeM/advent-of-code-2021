@@ -23,7 +23,7 @@ fn path_to_string(path: &[&str]) -> String {
 
 fn traverse<'a>(
     adjacencies: &'a Adjacencies,
-    path: & mut Vec<&'a str>,
+    path: &mut Vec<&'a str>,
     allow_double: bool,
     has_double: bool,
     result: &mut HashSet<String>,
