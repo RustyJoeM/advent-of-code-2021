@@ -23,33 +23,9 @@ fn path_to_string(path: &[&str]) -> String {
 
 fn traverse<'a>(
     adjacencies: &'a Adjacencies,
-    path: &mut Vec<&'a str>,
-    result: &mut HashSet<Path>,
-) {
-    let current_node = path.iter().last().unwrap();
-    let neighbors = adjacencies.get(current_node).unwrap();
-
-    for &node in neighbors.iter() {
-        if node.to_lowercase() == node && path.contains(&node) {
-            continue;
-        }
-
-        path.push(node);
-
-        if node == "end" {
-            result.insert(path_to_string(path));
-        } else {
-            traverse(adjacencies, path, result);
-        }
-
-        path.pop();
-    }
-}
-
-fn traverse2<'a>(
-    adjacencies: &'a Adjacencies,
     path: & mut Vec<&'a str>,
-    double: Option<&'a str>,
+    allow_double: bool,
+    has_double: bool,
     result: &mut HashSet<String>,
 ) {
     let current_node = path.iter().last().unwrap();
@@ -60,12 +36,12 @@ fn traverse2<'a>(
             continue;
         }
 
-        let mut my_double = double;
+        let mut my_double = has_double;
         if node.to_lowercase() == node && path.contains(&node) {
-            if double.is_some() {
+            if !allow_double || has_double {
                 continue;
             } else {
-                my_double = Some(node);
+                my_double = true;
             }
         }
 
@@ -74,17 +50,18 @@ fn traverse2<'a>(
         if node == "end" {
             result.insert(path_to_string(path));
         } else {
-            traverse2(adjacencies, path, my_double, result);
+            traverse(adjacencies, path, allow_double, my_double, result);
         }
 
         path.pop();
     }
 }
+
 fn solve_part1(adjacencies: &Adjacencies) -> usize {
     let mut path: Vec<&str> = vec!["start"];
     let mut results: HashSet<Path> = HashSet::new();
 
-    traverse(adjacencies, &mut path, &mut results);
+    traverse(adjacencies, &mut path, false, false, &mut results);
 
     results.len()
 }
@@ -93,7 +70,7 @@ fn solve_part2(adjacencies: &Adjacencies) -> usize {
     let mut path: Vec<&str> = vec!["start"];
     let mut results: HashSet<Path> = HashSet::new();
 
-    traverse2(adjacencies, &mut path, None, &mut results);
+    traverse(adjacencies, &mut path, true, false, &mut results);
 
     results.len()
 }
