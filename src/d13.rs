@@ -82,15 +82,15 @@ impl TransparentPaper {
     fn to_nice_strings(&self) -> Vec<String> {
         let mut strs = Vec::new();
         for r in 0..=self.rows {
-            let mut str = String::new();
+            let mut s = String::new();
             for c in 0..=self.cols {
                 if self.dots.contains(&(c, r)) {
-                    str.push('\u{2588}');
+                    s.push('\u{2588}');
                 } else {
-                    str.push('.');
+                    s.push('.');
                 }
             }
-            strs.push(str);
+            strs.push(s);
         }
         strs
     }
