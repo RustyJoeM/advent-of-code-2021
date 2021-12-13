@@ -55,7 +55,7 @@ impl TransparentPaper {
             let mut str = String::new();
             for c in 0..=self.cols {
                 if self.dots.contains(&(r, c)) {
-                    str.push('#');
+                    str.push('\u{2588}');
                 } else {
                     str.push('.');
                 }
