@@ -56,28 +56,24 @@ struct Screen {
 
 impl Screen {
     fn pixel_value(&self, row: i32, col: i32, is_outer_lighted: bool) -> usize {
-        let mut binary_str = "".to_string();
-        for r in row - 1..=row + 1 {
-            for c in col - 1..=col + 1 {
+        let mut value = 0;
+        let mut pow = 0;
+        for r in [row+1, row, row-1] {
+            for c in [col+1, col, col-1] {
                 let is_out = r <= self.min_row
                     || r >= self.max_row
                     || c <= self.min_col
                     || c >= self.max_col;
-                let next_char = if is_out {
-                    if is_outer_lighted {
-                        '1'
-                    } else {
-                        '0'
-                    }
-                } else if self.lights.contains(&(r, c)) {
-                    '1'
+                let next_char: usize = if is_out {
+                    is_outer_lighted as usize
                 } else {
-                    '0'
+                    self.lights.contains(&(r, c)) as usize
                 };
-                binary_str.push(next_char);
+                value += next_char * 2usize.pow(pow);
+                pow += 1;
             }
         }
-        usize::from_str_radix(binary_str.as_str(), 2).unwrap()
+        value
     }
 
     fn new_pixel(&self, row: i32, col: i32, is_outer_lighted: bool) -> char {
