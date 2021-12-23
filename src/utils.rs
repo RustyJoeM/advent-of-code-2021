@@ -33,7 +33,8 @@ macro_rules! generate_main_input {
             } else {
                 utils::string_from_input(DAY_ID)
             };
-            let data = parse_input(&data_str);
+            let data;
+            print_timed_result!("parse input", data = parse_input(&data_str));
             print_timed_result!("part 1", solve_part1(&data));
             print_timed_result!("part 2", solve_part2(&data));
         }

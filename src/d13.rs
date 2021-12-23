@@ -51,20 +51,24 @@ impl TransparentPaper {
             let mut next_dots = BTreeSet::new();
             for &(x, y) in self.dots.iter() {
                 match *fold {
-                    Fold::Column(f) => {
-                        if x > f {
+                    Fold::Column(f) => match x.cmp(&f) {
+                        std::cmp::Ordering::Less => {
+                            next_dots.insert((x, y));
+                        }
+                        std::cmp::Ordering::Equal => {}
+                        std::cmp::Ordering::Greater => {
                             next_dots.insert((f - (x - f), y));
-                        } else if x < f {
+                        }
+                    },
+                    Fold::Row(f) => match y.cmp(&f) {
+                        std::cmp::Ordering::Less => {
                             next_dots.insert((x, y));
                         }
-                    }
-                    Fold::Row(f) => {
-                        if y > f {
+                        std::cmp::Ordering::Equal => {}
+                        std::cmp::Ordering::Greater => {
                             next_dots.insert((x, f - (y - f)));
-                        } else if y < f {
-                            next_dots.insert((x, y));
                         }
-                    }
+                    },
                 }
             }
             self.dots = next_dots;

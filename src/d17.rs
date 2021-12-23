@@ -97,8 +97,8 @@ fn release_probe(area: &TargetArea) -> (Res, Res) {
     for vel_y in -max_velocity_y..max_velocity_y {
         for vel_x in 1..=area.x.1 {
             let mut probe = Probe {
-                velocity: Vec2 { x: vel_x, y: vel_y, },
-                position: Vec2 { x: 0, y: 0, },
+                velocity: Vec2 { x: vel_x, y: vel_y },
+                position: Vec2 { x: 0, y: 0 },
                 max_height: 0,
             };
             loop {
@@ -119,7 +119,6 @@ fn release_probe(area: &TargetArea) -> (Res, Res) {
 
     (hits, max_height)
 }
-
 
 fn solve_part1(area: &TargetArea) -> Res {
     let (_, max_height) = release_probe(area);

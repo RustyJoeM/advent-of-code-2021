@@ -15,6 +15,6 @@ fn solve_part2(data: &[String]) -> Res {
     0
 }
 
-generate_main!();
+generate_main_sample!();
 
 generate_tests!(0, 0);

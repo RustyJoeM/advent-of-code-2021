@@ -28,7 +28,7 @@ fn parse_input(data: &str) -> Screen {
     }
 
     let is_charging = algo[0] == '#';
-    let is_shutting = algo[algo.len()-1] == '.';
+    let is_shutting = algo[algo.len() - 1] == '.';
 
     Screen {
         algo,
@@ -58,8 +58,8 @@ impl Screen {
     fn pixel_value(&self, row: i32, col: i32, is_outer_lighted: bool) -> usize {
         let mut value = 0;
         let mut pow = 0;
-        for r in [row+1, row, row-1] {
-            for c in [col+1, col, col-1] {
+        for r in [row + 1, row, row - 1] {
+            for c in [col + 1, col, col - 1] {
                 let is_out = r <= self.min_row
                     || r >= self.max_row
                     || c <= self.min_col

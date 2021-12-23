@@ -15,11 +15,10 @@ fn parse_input(data: &str) -> (Vec<char>, Transitions) {
 
     let mut transitions = Transitions::new();
     for line in iter {
-        if line.is_empty() {
-            continue;
+        if !line.is_empty() {
+            let a: Vec<char> = line.chars().collect();
+            transitions.insert((a[0], a[1]), a[6]);
         }
-        let a: Vec<char> = line.chars().collect();
-        transitions.insert((a[0], a[1]), a[6]);
     }
 
     (starting, transitions)
@@ -28,25 +27,22 @@ fn parse_input(data: &str) -> (Vec<char>, Transitions) {
 #[allow(dead_code)]
 fn debug_counts(prefix: &str, counts: &Counts) {
     println!("{}", prefix);
-    counts.iter().filter(|x| {
-        x.1 > &0
-    }).for_each(|x| {
+    counts.iter().filter(|x| x.1 > &0).for_each(|x| {
         println!("{:?}", x);
     });
 }
 
 fn solve(steps: usize, (starting, transitions): &(Vec<char>, Transitions)) -> Res {
     let mut counts = Counts::new();
-    for (&key ,_) in transitions.iter() {
+    for (&key, _) in transitions.iter() {
         counts.insert(key, 0);
     }
 
-    let last_letter = starting.last().unwrap();
+    let &first_letter = starting.first().unwrap();
 
     for i in starting.windows(2) {
         let key = (i[0], i[1]);
-        let entry = counts.entry(key).or_insert(0);
-        *entry += 1;
+        *counts.entry(key).or_insert(0) += 1;
     }
 
     for _ in 0..steps {
@@ -70,8 +66,7 @@ fn solve(steps: usize, (starting, transitions): &(Vec<char>, Transitions)) -> Re
     for (key, val) in counts.iter() {
         *letter_counts.entry(key.0).or_insert(0) += val;
     }
-    *letter_counts.entry(*last_letter).or_insert(0) += 1;
-
+    *letter_counts.entry(first_letter).or_insert(0) += 1;
     let mut r = letter_counts.iter().map(|x| *x.1).collect::<Vec<usize>>();
     r.sort_unstable();
 
